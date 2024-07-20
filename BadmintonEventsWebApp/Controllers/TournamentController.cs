@@ -1,12 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BadmintonEventsWebApp.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BadmintonEventsWebApp.Controllers
 {
     public class TournamentController : Controller
     {
+        private ApplicationDbContext _context;
+
+        public TournamentController( ApplicationDbContext context )
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
-            return View();
+            var tournaments = _context.Tournaments.ToList();
+            return View( tournaments );
         }
     }
 }
