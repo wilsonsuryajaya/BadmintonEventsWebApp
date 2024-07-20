@@ -1,4 +1,5 @@
 ﻿using BadmintonEventsWebApp.Data;
+using BadmintonEventsWebApp.Interfaces;
 using BadmintonEventsWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,24 +8,23 @@ namespace BadmintonEventsWebApp.Controllers
 {
     public class ClubController : Controller
     {
-        private ApplicationDbContext _context;
+        private IClubRepository _clubRepository;
 
-        public ClubController( ApplicationDbContext context )
+        public ClubController( IClubRepository clubRepository )
         {
-            _context = context;    
+            _clubRepository = clubRepository;
         }
 
-
-        public IActionResult Index()             // Controller
+        public async Task<IActionResult> Index()                            // Controller
         {
-            var clubs = _context.Clubs.ToList(); // Model
-            return View( clubs );                // View
+            IEnumerable<Club> clubs = await _clubRepository.GetAll();       // Model
+            return View( clubs );                                           // View
         }
 
-        public IActionResult Detail( int id )
+        public async Task<IActionResult> Detail( int id )
         {
             // Include = sql join is expensive
-            Club club = _context.Clubs.Include( a => a.Address ).FirstOrDefault( x => x.Id == id );
+            Club club = await _clubRepository.GetByIdAsync( id );
             return View( "~/Views/Club/Detail.cshtml", model: club );
         }
     }
