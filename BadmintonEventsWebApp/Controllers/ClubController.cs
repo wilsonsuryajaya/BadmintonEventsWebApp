@@ -1,6 +1,7 @@
 ﻿using BadmintonEventsWebApp.Data;
 using BadmintonEventsWebApp.Interfaces;
 using BadmintonEventsWebApp.Models;
+using BadmintonEventsWebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +10,12 @@ namespace BadmintonEventsWebApp.Controllers
     public class ClubController : Controller
     {
         private IClubRepository _clubRepository;
+        private IPhotoService _photoService;
 
-        public ClubController( IClubRepository clubRepository )
+        public ClubController( IClubRepository clubRepository, IPhotoService photoService )
         {
             _clubRepository = clubRepository;
+            _photoService = photoService;
         }
 
         public async Task<IActionResult> Index()                            // Controller
@@ -34,14 +37,34 @@ namespace BadmintonEventsWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create( Club club )
+        public async Task<IActionResult> Create( CreateClubViewModel clubVM )
         {
-            if ( !ModelState.IsValid )
+            if ( ModelState.IsValid )
             {
-                return View( club );
+                var result = await _photoService.AddPhotoAsync( clubVM.Image );
+
+                var club = new Club
+                {
+                    Title = clubVM.Title,
+                    Description = clubVM.Description,
+                    Image = result.Url.ToString(),
+                    ClubCategory = clubVM.ClubCategory,
+                    Address = new Address
+                    {
+                        Id = clubVM.Address.Id,
+                        Street = clubVM.Address.Street,
+                        City = clubVM.Address.City,
+                        State = clubVM.Address.State,
+                    }
+                };
+                _clubRepository.Add( club );
+                return RedirectToAction( "index" );
             }
-            _clubRepository.Add( club );
-            return RedirectToAction( "index" );
+            else
+            {
+                ModelState.AddModelError( "", "Photo upload failed" );
+            }
+            return View( clubVM );
         }
     }
 }

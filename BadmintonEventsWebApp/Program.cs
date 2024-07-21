@@ -1,6 +1,8 @@
 using BadmintonEventsWebApp.Data;
+using BadmintonEventsWebApp.Helpers;
 using BadmintonEventsWebApp.Interfaces;
 using BadmintonEventsWebApp.Repository;
+using BadmintonEventsWebApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder( args );
@@ -9,6 +11,8 @@ var builder = WebApplication.CreateBuilder( args );
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IClubRepository, ClubRepository>();
 builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.Configure<CloudinarySettings>( builder.Configuration.GetSection( "CloudinarySettings" ) );
 builder.Services.AddDbContext<ApplicationDbContext>( options =>
 {
     options.UseSqlServer( builder.Configuration.GetConnectionString( "DefaultConnection" ) );

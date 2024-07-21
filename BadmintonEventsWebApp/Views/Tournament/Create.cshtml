@@ -1,12 +1,13 @@
 ﻿@using BadmintonEventsWebApp.Data.Enums
-@model Tournament
+@using BadmintonEventsWebApp.ViewModels
+@model CreateTournamentViewModel
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
 }
 
-<form method="post" asp-action="Create">
+<form method="post" asp-action="Create" enctype="multipart/form-data">
     <div class="mb-3">
         <label asp-for="Title" class="form-label">Title</label>
         <input asp-for="Title" class="form-control" placeholder="Title">
@@ -18,16 +19,18 @@
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="Image" class="form-label">Image</label>
-        <input asp-for="Image" class="form-control" placeholder="Image">
-        <span asp-validation-for="Image" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="MatchCategory" class="form-label">ClubCategory</label>
-        <select asp-for="MatchCategory" asp-items="@Html.GetEnumSelectList<ClubCategory>()" class="form-control" placeholder="ClubCategory">
+        <label asp-for="MatchCategory" class="form-label">MatchCategory</label>
+        <select asp-for="MatchCategory" asp-items="@Html.GetEnumSelectList<MatchCategory>()" class="form-control" placeholder="MatchCategory">
             <option>--Select--</option>
         </select>
         <span asp-validation-for="MatchCategory" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AgeCategory" class="form-label">AgeCategory</label>
+        <select asp-for="AgeCategory" asp-items="@Html.GetEnumSelectList<AgeCategory>()" class="form-control" placeholder="AgeCategory">
+            <option>--Select--</option>
+        </select>
+        <span asp-validation-for="AgeCategory" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="Address.Street" class="form-label">Street</label>
@@ -43,6 +46,11 @@
         <label asp-for="Address.State" class="form-label">State</label>
         <input asp-for="Address.State" class="form-control" placeholder="State">
         <span asp-validation-for="Address.State" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Image" class="form-label">Image</label>
+        <input asp-for="Image" type="file" class="form-control" placeholder="Image">
+        <span asp-validation-for="Image" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
