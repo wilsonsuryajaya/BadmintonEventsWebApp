@@ -8,6 +8,8 @@ namespace BadmintonEventsWebApp.Interfaces
 
         Task<Tournament> GetByIdAsync( int id );
 
+        Task<Tournament?> GetByIdAsyncNoTracking( int id );
+
         Task<IEnumerable<Tournament>> GetClubByCity( string city );
 
         bool Add( Tournament club );

@@ -37,6 +37,11 @@ namespace BadmintonEventsWebApp.Repository
             return await _context.Tournaments.Include( a => a.Address ).FirstOrDefaultAsync( b => b.Id == id );
         }
 
+        public async Task<Tournament?> GetByIdAsyncNoTracking( int id )
+        {
+            return await _context.Tournaments.Include( i => i.Address ).AsNoTracking().FirstOrDefaultAsync( i => i.Id == id );
+        }
+
         public async Task<IEnumerable<Tournament>> GetClubByCity( string city )
         {
             return await _context.Tournaments.Where( b => b.Address.City.Contains( city ) ).ToListAsync();

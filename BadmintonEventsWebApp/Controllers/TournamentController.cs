@@ -67,5 +67,75 @@ namespace BadmintonEventsWebApp.Controllers
             }
             return View( tournamentVM );
         }
+
+        public async Task<IActionResult> Edit( int id )
+        {
+            var tournament = await _tournamentRepository.GetByIdAsync( id );
+            if ( tournament == null )
+                return View( "error" );
+            // Can you automapper
+            var tournamentVM = new EditTournamentViewModel
+            {
+                Title = tournament.Title,
+                Description = tournament.Description,
+                AddressId = tournament.AddressId,
+                Address = tournament.Address,
+                URL = tournament.Image,
+                MatchCategory = tournament.MatchCategory,
+                AgeCategory = tournament.AgeCategory,
+            };
+            return View( tournamentVM );
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit( int id, EditTournamentViewModel tournamentVM )
+        {
+            if ( !ModelState.IsValid )
+            {
+                ModelState.AddModelError( "", "Failed to edit tournament" );
+                return View( "Edit", tournamentVM );
+            }
+
+            var userTournament = await _tournamentRepository.GetByIdAsyncNoTracking( id );
+
+            if ( userTournament == null )
+            {
+                return View( "Error" );
+            }
+
+            userTournament.Title = tournamentVM.Title;
+            userTournament.Description = tournamentVM.Description;
+            userTournament.MatchCategory = tournamentVM.MatchCategory;
+            userTournament.AgeCategory = tournamentVM.AgeCategory;
+            if ( userTournament.Address == null )
+                userTournament.Address = new Address();
+            userTournament.Address.Id = tournamentVM.Address.Id;
+            userTournament.Address.Street = tournamentVM.Address.Street;
+            userTournament.Address.City = tournamentVM.Address.City;
+            userTournament.Address.State = tournamentVM.Address.State;
+
+            if ( tournamentVM.Image != null )
+            {
+                if ( !string.IsNullOrEmpty( userTournament.Image ) )
+                {
+                    try
+                    {
+                        await _photoService.DeletePhotoAsync( userTournament.Image );
+                    }
+                    catch ( Exception ex )
+                    {
+                        ModelState.AddModelError( "", "Could not delete photo" );
+                        return View( "Edit", tournamentVM );
+                    }
+                }
+
+                var photoResult = await _photoService.AddPhotoAsync( tournamentVM.Image );
+
+                userTournament.Image = photoResult.Url.ToString();
+            }
+
+            _tournamentRepository.Update( userTournament );
+            return RedirectToAction( "Index" );
+        }
     }
 }
