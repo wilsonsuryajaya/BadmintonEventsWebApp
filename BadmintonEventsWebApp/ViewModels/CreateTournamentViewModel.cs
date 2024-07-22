@@ -18,5 +18,7 @@ namespace BadmintonEventsWebApp.ViewModels
         public MatchCategory MatchCategory { get; set; }
 
         public AgeCategory AgeCategory { get; set; }
+
+        public string AppUserId { get; set; }
     }
 }

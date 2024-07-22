@@ -32,9 +32,12 @@ namespace BadmintonEventsWebApp.Controllers
             return View( "~/Views/Club/Detail.cshtml", model: club );
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            var curUserId = HttpContext.User.GetUserId();
+            var createClubViewModel = new CreateClubViewModel { AppUserId = curUserId };
+            return View( createClubViewModel );
         }
 
         [HttpPost]
@@ -50,6 +53,7 @@ namespace BadmintonEventsWebApp.Controllers
                     Description = clubVM.Description,
                     Image = result.Url.ToString(),
                     ClubCategory = clubVM.ClubCategory,
+                    AppUserId = clubVM.AppUserId,
                     Address = new Address
                     {
                         Id = clubVM.Address.Id,

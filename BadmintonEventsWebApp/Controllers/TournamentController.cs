@@ -12,11 +12,13 @@ namespace BadmintonEventsWebApp.Controllers
     {
         private ITournamentRepository _tournamentRepository;
         private IPhotoService _photoService;
+        private IHttpContextAccessor _httpContextAccessor;
 
-        public TournamentController( ITournamentRepository tournamentRepository, IPhotoService photoService )
+        public TournamentController( ITournamentRepository tournamentRepository, IPhotoService photoService, IHttpContextAccessor httpContextAccessor )
         {
             _tournamentRepository = tournamentRepository;
             _photoService = photoService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IActionResult> Index()
@@ -34,7 +36,9 @@ namespace BadmintonEventsWebApp.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var curUserID = _httpContextAccessor.HttpContext?.User.GetUserId();
+            var createRaceViewModel = new CreateTournamentViewModel { AppUserId = curUserID };
+            return View( createRaceViewModel );
         }
 
         [HttpPost]
@@ -50,6 +54,7 @@ namespace BadmintonEventsWebApp.Controllers
                     Description = tournamentVM.Description,
                     Image = result.Url.ToString(),
                     MatchCategory = tournamentVM.MatchCategory,
+                    AppUserId = tournamentVM.AppUserId,
                     Address = new Address
                     {
                         Id = tournamentVM.Address.Id,
