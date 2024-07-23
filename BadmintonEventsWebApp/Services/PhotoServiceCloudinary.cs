@@ -6,11 +6,11 @@ using Microsoft.Extensions.Options;
 
 namespace BadmintonEventsWebApp.Services
 {
-    public class PhotoService : IPhotoService
+    public class PhotoServiceCloudinary : IPhotoService
     {
         private readonly Cloudinary _cloudinary;
 
-        public PhotoService( IOptions<CloudinarySettings> config )
+        public PhotoServiceCloudinary( IOptions<CloudinarySettings> config )
         {
             var account = new Account(
                 config.Value.CloudName,
