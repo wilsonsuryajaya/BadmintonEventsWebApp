@@ -140,6 +140,11 @@ namespace BadmintonEventsWebApp.Controllers
             return RedirectToAction( "Index" );
         }
 
+        /// <summary>
+        /// Show Delete Page
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Delete( int id )
         {
@@ -149,6 +154,11 @@ namespace BadmintonEventsWebApp.Controllers
             return View( clubDetails );
         }
 
+        /// <summary>
+        /// Perform the actual delete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName( "Delete" )]
         public async Task<IActionResult> DeleteClub( int id )
         {

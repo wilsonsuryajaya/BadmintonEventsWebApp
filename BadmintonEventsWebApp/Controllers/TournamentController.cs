@@ -142,5 +142,33 @@ namespace BadmintonEventsWebApp.Controllers
             _tournamentRepository.Update( userTournament );
             return RedirectToAction( "Index" );
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete( int id )
+        {
+            var tournamentDetails = await _tournamentRepository.GetByIdAsync( id );
+            if ( tournamentDetails == null ) return View( "Error" );
+            return View( tournamentDetails );
+        }
+
+        [HttpPost, ActionName( "Delete" )]
+        public async Task<IActionResult> DeleteClub( int id )
+        {
+            var tournamentDetails = await _tournamentRepository.GetByIdAsync( id );
+
+            if ( tournamentDetails == null )
+            {
+                return View( "Error" );
+            }
+
+            if ( !string.IsNullOrEmpty( tournamentDetails.Image ) )
+            {
+                _ = _photoService.DeletePhotoAsync( tournamentDetails.Image );
+            }
+
+            _tournamentRepository.Delete( tournamentDetails );
+            return RedirectToAction( "Index" );
+        }
     }
+
 }
